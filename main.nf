@@ -12,6 +12,7 @@ params.pheno = "${params.datadir}/SMARCA4_phenotype.csv"
 include {multiallelic_splitting} from './modules/QC_preprocessing_vcf'
 include {monomorphic} from './modules/variant_filtering'
 include {formatting_variant_testing; single_variant_testing; gene_based_testing} from './modules/variant_testing'
+include {create_report} from './modules/report_results'
 
 workflow { 
   //Set input data
@@ -36,6 +37,8 @@ workflow {
   //
   single_variant_testing(formatting_variant_testing.out.genotype, formatting_variant_testing.out.phenotype)
   gene_based_testing(formatting_variant_testing.out.genotype, formatting_variant_testing.out.phenotype)
-
+  
+  single_variant_testing.out.sv_results.merge(gene_based_testing.out.rv_results).collect().set{input_report}
+  create_report(input_report)
   
 }

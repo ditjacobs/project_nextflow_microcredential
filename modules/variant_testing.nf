@@ -27,7 +27,7 @@ process single_variant_testing {
     path(phenotype)
 
     output: 
-    path("single_variant_results.csv")
+    path("single_variant_results.csv"), emit: sv_results
 
     script: 
     """
@@ -45,7 +45,7 @@ process gene_based_testing{
     path(phenotype)
 
     output: 
-    path("rare_variant_results.csv")
+    path("rare_variant_results.csv"), emit: rv_results
 
     script: 
     """
