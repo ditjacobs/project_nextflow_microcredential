@@ -3,6 +3,7 @@
 args = commandArgs(trailingOnly=TRUE)
 geno <- args[1]
 pheno <- args[2]
+name <- args[3]
 
 geno <- read.csv(geno, header = TRUE)
 pheno <- read.csv(pheno, header = TRUE)
@@ -77,4 +78,11 @@ single_variant_test <- function(genotype, phenotype) {
 
 pvalues <- single_variant_test(geno, pheno)
 
-write.csv(pvalues, "single_variant_results.csv")
+pvalues_sorted <- pvalues[order(pvalues$p_value),]
+
+adjusted_pvalues <- p.adjust(pvalues_sorted$p_value, method = "bonferroni")
+
+pvalues_sorted_corrected <- cbind(pvalues_sorted, adjusted_pvalues)
+
+output <- paste(name, "single_variant_results.csv", sep ="_")
+write.csv(pvalues_sorted_corrected, output)

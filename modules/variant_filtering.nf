@@ -14,18 +14,3 @@ process monomorphic{
     bcftools view -e 'AC=0 || AC=AN || AC=0 && AN=0' ${VCFfile} -o ${filename}_monomorph.vcf
     """
 }
-
-/*
-process MAF{ 
-    publishDir "${params.outdir}/filtering", mode: "copy", overwrite: true
-    //container ""
-    input: 
-
-    output: 
-
-    script:
-    """
-    
-    """
-}
-*/

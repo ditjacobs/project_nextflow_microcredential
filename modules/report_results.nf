@@ -10,7 +10,11 @@ process create_report{
 
     script:
     """
-    cat ${inputfiles} > report.txt
+    for file in ${inputfiles}; do 
+        echo "Content file $inputfiles" >> report.txt
+        cat $inputfiles >> report.txt
+        echo -e "\n"  >> report.txt
+    done
     """
 }
 

@@ -1,17 +1,18 @@
 #!/usr/bin/env nextflow
 
+// Set default parameters
 // General Parameters
-params.datadir = "${launchDir}/data"
-params.outdir = "${launchDir}/results"
+params.datadir = "${projectDir}/data"
+params.outdir = "${projectDir}/results"
 
 // Input parameters
-params.vcfpath = "${params.datadir}/SMARCA4_VCF.vcf"
-params.pheno = "${params.datadir}/SMARCA4_phenotype.csv"
+params.vcfpath = "${params.datadir}/*.vcf"
+params.pheno = "${params.datadir}/*.csv"
 
 // include modules and subworkflows
 include {multiallelic_splitting} from './modules/QC_preprocessing_vcf'
 include {monomorphic} from './modules/variant_filtering'
-include {formatting_variant_testing; single_variant_testing; gene_based_testing} from './modules/variant_testing'
+include {association_testing} from './modules/variant_testing'
 include {create_report} from './modules/report_results'
 
 workflow { 
@@ -24,21 +25,31 @@ workflow {
   //Set new input based on vcf from splitting 
   multiallelic_splitting.out.vcf_split.map{ file -> tuple(file.baseName, file)}.set{input_VCF_monomorph}
 
-  //filter out all monomorph variants 
+  //filter out all monomorphic variants 
   monomorphic(input_VCF_monomorph)
 
   //Run association analysis 
-  //Necessary inputs are: vcf after QC and filtering and 
-  //Channel.fromPath(params.pheno).view()
-  //monomorphic.out.vcf_filter_monomorph.view()
-  //Channel.fromPath(params.pheno).join(monomorphic.out.vcf_filter_monomorph).view()
-  def pheno = channel.fromPath(params.pheno)
-  formatting_variant_testing(monomorphic.out.vcf_filter_monomorph, pheno)
-  //
-  single_variant_testing(formatting_variant_testing.out.genotype, formatting_variant_testing.out.phenotype)
-  gene_based_testing(formatting_variant_testing.out.genotype, formatting_variant_testing.out.phenotype)
+  // find common part of vcf and pheno file names to match them correctly 
+  Channel.fromPath(params.pheno)
+    .map { file ->   
+      def id = file.name.split('_')[0]    
+      return [id, file] 
+    }
+    .set{ pheno }
+  monomorphic.out.vcf_filter_monomorph
+    .map{file -> 
+      def id=  file.name.split('_')[0] 
+      return [id, file] 
+    }
+    .set{vcf}
+  //join the pheno and vcf file based on the id 
+  vcf.join(pheno).set{input_association}
+  vcf.join(pheno).view()
+  //view if the input was correctly matched 
+  //name = "lol"
+  results = association_testing(input_association)
   
-  single_variant_testing.out.sv_results.merge(gene_based_testing.out.rv_results).collect().set{input_report}
+  // create report
+  results.merge().collect().set{input_report}
   create_report(input_report)
-  
 }

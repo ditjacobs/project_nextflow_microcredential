@@ -3,6 +3,7 @@
 args = commandArgs(trailingOnly=TRUE)
 geno <- args[1]
 pheno <- args[2]
+name <- args[3]
 
 geno <- read.csv(geno, header = TRUE)
 pheno <- read.csv(pheno, header = TRUE)
@@ -41,4 +42,5 @@ gene_based_test <- function(genotype, phenotype){
 
 pvalues <- gene_based_test(geno, pheno)
 
-write.csv(pvalues, "rare_variant_results.csv")
+output <- paste(name, "rare_variant_results.csv", sep = "_")
+write.csv(pvalues, output)
