@@ -14,6 +14,12 @@ The workflow includes 4 modules:
 
 *FYI: This analysis was part of a study aimed at identifying disease-associated variants in the SMARCA4 gene related to otosclerosis. A single-molecule Molecular Inversion Probe (smMIP) experiment was designed to capture and sequence the DNA of the SMARCA4 gene in both otosclerosis case and control samples. However, in this example a random test dataset from the 1000Genomes project was used. Two random subsets were created from `ALL.chrMT.phase3_callmom-v0_4.20130502.genotypes.vcf` file [link](https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/). The phenotype information was also created by random sampling phenotype of 0/1. Thus, the results have no meaning at all.*
 
+Instruction to run the nextflow pipeline on the VSC:
+```
+nextflow run main.nf -profile standard,apptainer
+```
+Also, a docker profile was included in the nextflow.config. 
+
 ## Modules 
 
 ### 1. Quality control preprocessing 
@@ -58,4 +64,4 @@ In the future, I would adapt the pipeline to include all necessary modules for t
 
 ## Difficulties with the assignment 
 
-Due to frequent problems with the Tier-1 of the University of Antwerp, I continued my work on the BIOMINA server. At which everything went fine. However, I wasn't able to check the Docker compatibility due to sudo right restrictions.
+Due to recurring problems with the Tier-1 of the University of Antwerp, I continued my work on the BIOMINA server. At which everything went fine. However, I wasn't able to check the Docker compatibility due to sudo right restrictions. 
