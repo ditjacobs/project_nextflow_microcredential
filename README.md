@@ -20,6 +20,13 @@ nextflow run main.nf -profile standard,apptainer
 ```
 Also, a docker profile was included in the nextflow.config. 
 
+Note: If working on the VSC load the nextflow module and export the environment variables.
+```
+module load Nextflow/24.04.2
+export APPTAINER_CACHEDIR=${VSC_SCRATCH}/.apptainer_cache
+export APPTAINER_TMPDIR=${VSC_SCRATCH}/.apptainer_tmp
+```
+
 ## Modules 
 
 ### 1. Quality control preprocessing 
