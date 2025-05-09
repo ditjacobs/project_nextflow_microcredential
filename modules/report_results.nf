@@ -1,6 +1,6 @@
 process create_report{
     publishDir "${params.outdir}/", mode: "copy", overwrite: true
-    //label "small"
+    label "low"
 
     input:
     path(inputfiles)

@@ -1,13 +1,7 @@
 #!/usr/bin/env nextflow
 
-// Set default parameters
-// General Parameters
-params.datadir = "${projectDir}/data"
-params.outdir = "${projectDir}/results"
-
-// Input parameters
-params.vcfpath = "${params.datadir}/*.vcf"
-params.pheno = "${params.datadir}/*.csv"
+// Set parameters
+// parameters are included in params.config
 
 // include modules and subworkflows
 include {multiallelic_splitting} from './modules/QC_preprocessing_vcf'
@@ -18,6 +12,7 @@ include {create_report} from './modules/report_results'
 workflow { 
   //Set input data
   def input_VCF = Channel.fromPath(params.vcfpath).map{ file -> tuple(file.baseName, file)}
+  input_VCF.view()
   
   // Split multiallelic variants 
   multiallelic_splitting(input_VCF)
@@ -44,6 +39,8 @@ workflow {
     .set{vcf}
   //join the pheno and vcf file based on the id 
   vcf.join(pheno).set{input_association}
+
+  //Look at the joined channel with pheno and vcf
   vcf.join(pheno).view()
   //view if the input was correctly matched 
   //name = "lol"
