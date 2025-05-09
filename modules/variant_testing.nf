@@ -21,8 +21,8 @@ process formatting_variant_testing {
 process single_variant_testing { 
     publishDir "${params.outdir}/variant_testing", mode: "copy", overwrite: true 
     //container 'oras://community.wave.seqera.io/library/r-base:4.4.3--7be4e7faa3ce399e'
-    container "/library/r-base:4.5.0"
-    label "low"
+    container "quay.io/biocontainers/r-base:3.4.2"
+    label "high"
 
     input: 
     path(genotype)

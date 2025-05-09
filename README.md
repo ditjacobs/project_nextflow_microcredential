@@ -1,8 +1,8 @@
-# project_nextflow_microcredential
+# Project Nextflow microcredential
 
 ## Introduction 
 
-In this project, I developed a workflow designed to identify significant associations between genetic variants/genes and a specific phenotype, disease, or condition. The analysis requires two inputs: a phenotype file and a pVCF (project VCF) file. In the initial steps, the pVCF is preprocessed and filtered to retain relevant variants. The workflow performs two main types of statistical analysis: single-variant testing. Normally, gene-based testing is performed as well. Common variants, with a minor allele frequency (MAF) of at least 0.01, allow to be tested individually, as the alternative allele is frequent enough to allow for a powerful statistical analysis. Rare and very rare variants, with a MAF below 0.01, do not allow for a single variant analysis due to the lack of statistical power. For these latter variants, the cumulative effect of multiple variants within a single gene is tested, under a wide range of assumptions. Finally, a report is created with the results. 
+In this project, I developed a workflow designed to identify significant associations between genetic variants/genes and a specific phenotype, disease, or condition. The analysis requires two inputs: a phenotype file and a pVCF (project VCF) file. In the initial steps, the pVCF is preprocessed and filtered to retain relevant variants. The workflow performs single-variant testing. Normally, gene-based testing is performed as well. Common variants, with a minor allele frequency (MAF) of at least 0.01, allow to be tested individually, as the alternative allele is frequent enough to allow for a powerful statistical analysis. Rare and very rare variants, with a MAF below 0.01, do not allow for a single variant analysis due to the lack of statistical power. For these latter variants, the cumulative effect of multiple variants within a single gene is tested, under a wide range of assumptions. Finally, a report is created with the results. 
 
 The workflow includes 4 modules: 
 1. QC_preprocessing_VCF
@@ -44,10 +44,18 @@ In the final step, all results are collected and reported in a single output fil
 
 The parameters are included in `params.config`. The parameters include the paths of the input data files and the output directory. 
 
-In the nextflow.config ... 
+In the nextflow.config, profiles were added for apptainer and docker. Additionally, a standard profile was included to provide the correct resources for each process. *Note: this can be expanded and optimized in the future. At the moment, it doesn't add much value as all processes utilize the same resources*
 
 The workflow begins by collecting all VCF files into a queue channel. Each file is mapped into a tuple containing the file's base name and its path. The base name is included to track the file through the pipeline, with each processing step appending a new extension to the name to indicate which transformations have been applied.
 
 First, the files go through the `multiallelic_splitting`process from the QC_preprocessing_vcf module. The output files with a new extension are passed on to the next process `monomorphic` from the variant_filtering module. Again, a tuple of the file basename and file path is set as input. The set operator sets the tuples to a new channel called input_vcf_monomorph. 
 
 A new queue channel is created for the phenotype files for association testing. The phenotype files are matched with the corresponding vcf file for association testing. All results are then collected and included in a report.
+
+## Possible improvements 
+
+In the future, I would adapt the pipeline to include all necessary modules for the analysis. I would further optimize the computing resources for each module and include a shell script for SLURM. The R scripts would either be improved for reproducibility or other tools such as PLINK/regenie can be implemented in new modules. I would also make the workflow conda compatible, by adding conda compatibility in the nextflow config and including conda packages for each process for example: bioconda::bcftools. I would also report the results in a better manner/format (now all content is just appended to a text file without any structure). 
+
+## Difficulties with the assignment 
+
+Due to frequent problems with the Tier-1 of the University of Antwerp, I continued my work on the BIOMINA server. At which everything went fine. However, I wasn't able to check the Docker compatibility due to sudo right restrictions.

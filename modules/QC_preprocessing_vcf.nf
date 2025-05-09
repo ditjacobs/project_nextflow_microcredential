@@ -1,14 +1,13 @@
 process multiallelic_splitting{ 
     publishDir "${params.outdir}/QC", mode: "copy", overwrite: true
-    //container "oras://community.wave.seqera.io/library/bcftools:1.21--21573c18b3ab6bcb"
-    container "quay.io/biocontainers/bcftools:1.3--0"
+    container "quay.io/biocontainers/bcftools:1.4--0" 
     label "low"
 
     input:
     tuple val(filename), path(VCFfile)
 
     output: 
-    path("${filename}_split.vcf"), emit: vcf_split
+    path("*_split.vcf"), emit: vcf_split
     
     script: 
     """
